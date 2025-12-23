@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 categories = ["fashion", "entertainment", "tech", "sports", "finance"]
 
@@ -25,31 +27,25 @@ posts = [
     {"id": 10, "title": "Investment Basics", "tag": "finance"},
 ]
 
-
 @app.route("/")
 def health():
     return jsonify({"status": "API is running"})
-
 
 @app.route("/users")
 def list_users():
     return jsonify(users)
 
-
 @app.route("/categories")
 def list_categories():
     return jsonify(categories)
-
 
 @app.route("/posts")
 def list_posts():
     return jsonify(posts)
 
-
 @app.route("/feed/<int:user_id>")
 def user_feed(user_id):
     selected_user = None
-
     for user in users:
         if user["id"] == user_id:
             selected_user = user
@@ -68,21 +64,16 @@ def user_feed(user_id):
         "recommended_posts": result
     })
 
-
 @app.route("/users", methods=["POST"])
 def create_user():
     body = request.get_json()
-
     new_user = {
         "id": len(users) + 1,
         "name": body.get("name"),
         "categories": body.get("categories", [])
     }
-
     users.append(new_user)
     return jsonify(new_user), 201
 
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
